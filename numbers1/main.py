@@ -145,7 +145,9 @@ def calculate_amount_of_lucky_tickets():
 def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max value is 27128
     if n > calculate_amount_of_lucky_tickets():
         print("Maximum number of lucky tickets to print exceeted")
-        return 
+        return
+    if n == 0: 
+        return []
     if n == 1:
         return ["000000"]
     lucky_ticket_list = ["000000"]
@@ -154,21 +156,18 @@ def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max 
     counter = 0
     while counter < n:
         partial_list.clear()
-        print("loop start", partial_list, i)
         get_sum_terms(list(range(1, 10)), i)
         combination_list = [a for a in partial_list if len(a) <= 3]
-        print("combination_list", combination_list)
         for comb in combination_list:
             temp_result = []
             final_list = []
-            print(comb)
             if len(comb) == 1:
                 temp_result = list(set(list(itertools.product(f'{comb[0]}00', repeat=3)))) # function that gives all possible combinations on string
             elif len(comb) == 2:
                 temp_result = list(set(list(itertools.product(f'{comb[0]}{comb[1]}0', repeat=3))))
             else:
                 temp_result = list(set(list(itertools.product(f'{comb[0]}{comb[1]}{comb[2]}', repeat=3))))
-            print("products", temp_result)
+            # print("products", temp_result)
             for r in temp_result:
                 for t in temp_result:
                     # print(sum([int(elem1) for elem1 in r]), sum([int(elem2) for elem2 in t]), r, t, r+t)
