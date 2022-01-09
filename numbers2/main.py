@@ -34,6 +34,4 @@ def as_hex(n):
 # test zone
 
 print(as_binary(7))
-print(as_hex(15), as_hex(255))
-print("e")
-print("e")
+print(as_hex(111), as_hex(255))
