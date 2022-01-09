@@ -169,18 +169,20 @@ def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max 
         list_of_combinations_indexed_by_value[digit_sum] += 1 
 
     i = 1
-    counter = 1
+    counter = 0
     while True:
         get_sum_terms(list(range(1, 10)), i)
-        combination_list = [str(a) for a in partial_list if len(a) <= 3]
+        combination_list = [a for a in partial_list if len(a) <= 3]
+        print("combination_list", combination_list, 1, [1], '[1]')
         for comb in combination_list:
             temp_result = []
+            print(f'{comb[0]}00', comb)
             if len(comb) == 1:
-                temp_result = itertools.product("".join([comb[0], 0, 0]), repeat=3)
+                temp_result = itertools.product(f'{comb[0]}00', repeat=3)
             elif len(comb) == 2:
-                temp_result = itertools.product("".join([comb[0], comb[1], 0]), repeat=3)
+                temp_result = itertools.product(f'{comb[0]}{comb[1]}0', repeat=3)
             else:
-                temp_result = itertools.product("".join([comb[0], comb[1], comb[2]]), repeat=3)
+                temp_result = itertools.product(f'{comb[0]}{comb[1]}{comb[2]}', repeat=3)
             final_list = []
             for r in temp_result:
                 for t in temp_result:
