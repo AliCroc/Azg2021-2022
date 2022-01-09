@@ -151,7 +151,7 @@ def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max 
     if n == 1:
         return ["000000"]
     lucky_ticket_list = ["000000"]
-
+    n -= 1
     i = 1
     counter = 0
     while counter < n:
@@ -182,10 +182,10 @@ def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max 
                     break
             if counter >= n:
                     break
-        counter -= len(lucky_ticket_list) - len(list(set(lucky_ticket_list)))
-        lucky_ticket_list = list(set(lucky_ticket_list))
+        # counter -= len(lucky_ticket_list) - len(list(set(lucky_ticket_list)))
+        # lucky_ticket_list = list(set(lucky_ticket_list))
         i += 1
-    return lucky_ticket_list
+    return sorted(lucky_ticket_list)
 #
 
 # test area
@@ -214,7 +214,7 @@ print(is_prime(1), is_prime(5), is_prime(1024), is_prime(97))
 
 print(is_lucky("123123"), is_lucky("111222"), is_lucky("000001"))
 
-print(generate_n_lucky_tickets(15))
+print(generate_n_lucky_tickets(10))
 
 print(calculate_amount_of_lucky_tickets())
 
