@@ -1,24 +1,34 @@
 # imports
-import math
+import math, itertools
 
-# helping variables / functions (not important)
+# helping functions and variables, not important
+
 global partial_list
 partial_list = []
 
-def get_number_combinations(numbers, target_value, partial=[]):
+def get_sum_terms(numbers, target, partial=[]):
     s = sum(partial)
-    print(partial)
-    if s == target_value:
-        partial_list.clear()
+    print(partial, s)
+    if s == target: 
         partial_list.append(partial)
-    if s >= target_value:
+    if s >= target:
         return
+    
     for i in range(len(numbers)):
         n = numbers[i]
         remaining = numbers[i+1:]
-        get_number_combinations(remaining, target_value, partial + [n]) 
+        get_sum_terms(remaining, target, partial + [n])
 
-# task function declarations
+def get_combination_of_numbers(list_of_numbers):
+    combinations = []
+    for i in range(0, 3):
+        for j in range(0, 3):
+            for k in range(0, 3):
+                if(i != j & j != k & k != i):
+                    combinations.append(f'{list_of_numbers[i]}{list_of_numbers[j]}{list_of_numbers[k]}')
+    return combinations
+
+# function declarations
 
 def my_max(number_a, number_b): #returns greatest value out of 2 integers
     if number_a > number_b:
@@ -116,21 +126,75 @@ def is_lucky(serial_number):
         return True
     return False
 
-def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets
-    lucky_tickets_list = []
-    value = 8
-    number_combinations = []
-    # this value represents what equal value will first half and second half aim for so the ticket can be lucky
-    # for example for value 1 program will print all combiantions of lucky serial numbers ticket
-    if n > 0:
-        number_combinations.append("000000")
-        n -= 1
-    while n > 0:
-        get_number_combinations(list(range(10)), value)
-        print(partial_list, list(range(10)))
-        available_numbers = [a for a in partial_list if len(a) <= 3]
-        print(available_numbers)
-        n = 0
+
+def calculate_amount_of_lucky_tickets():
+    # there are total of 900000 combinations of 6-digit numbers, including "000000"
+    # sum of 3 digit number has a range between 0 and 27
+    # for a ticket to be lucky we need two 3-digit numbers which sum of digits is the same
+    # function will calculate all possible combinations of getting a values in range [0, 27] then get all combinations of lucky 6-digit serial numbers
+    
+    lucky_ticket_serial_number_count = 2 # this includes "000000" and "999999" which values (0 nad 27) will be excluded in further calculations
+    list_of_combinations_indexed_by_value = [0] * 27
+    # can be 27, here first and last are excluded
+    three_digit_combinations = 998 # excluding '000' and '999'
+
+    for value in range(1, three_digit_combinations + 1):
+        digit_sum = 0
+        while (value != 0):
+            digit_sum += int(value % 10)
+            value = int(value/10)
+        list_of_combinations_indexed_by_value[digit_sum] += 1
+    for value_index in range(1, 27):
+        # kombinacja z powtórzeniami
+        combination_result = int(math.factorial(int(list_of_combinations_indexed_by_value[value_index]+1))/(2*math.factorial(list_of_combinations_indexed_by_value[value_index]-1)))
+        lucky_ticket_serial_number_count += combination_result
+    return lucky_ticket_serial_number_count
+
+
+def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max value is 27128
+    if n > calculate_amount_of_lucky_tickets():
+        print("Maximum number of lucky tickets to print exceeted")
+        return 
+    if n == 1:
+        return ["000000"]
+    lucky_ticket_list = ["000000"]
+    list_of_combinations_indexed_by_value = [0] * 27
+    # can be 27, here first and last are excluded
+    three_digit_combinations = 998 # excluding '000' and '999'
+    for value in range(1, three_digit_combinations + 1):
+        digit_sum = 0
+        while (value != 0):
+            digit_sum += int(value % 10)
+            value = int(value / 10)
+        list_of_combinations_indexed_by_value[digit_sum] += 1 
+
+    i = 1
+    counter = 1
+    while True:
+        get_sum_terms(list(range(1, 10)), i)
+        combination_list = [str(a) for a in partial_list if len(a) <= 3]
+        for comb in combination_list:
+            temp_result = []
+            if len(comb) == 1:
+                temp_result = itertools.product("".join([comb[0], 0, 0]), repeat=3)
+            elif len(comb) == 2:
+                temp_result = itertools.product("".join([comb[0], comb[1], 0]), repeat=3)
+            else:
+                temp_result = itertools.product("".join([comb[0], comb[1], comb[2]]), repeat=3)
+            final_list = []
+            for r in temp_result:
+                for t in temp_result:
+                    final_list.append(r + t)
+                    counter += 1
+                    if counter >= n:
+                        break
+                if counter >= n:
+                    break
+            lucky_ticket_list.append(list(set(final_list)))
+        if counter >= n:
+            break
+        i += 1  
+    return lucky_ticket_list
 #
 
 # test area
@@ -161,6 +225,6 @@ print(is_lucky("123123"), is_lucky("111222"), is_lucky("000001"))
 
 print(generate_n_lucky_tickets(5))
 
-print("empty")
+print(calculate_amount_of_lucky_tickets())
 
 #
