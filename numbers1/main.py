@@ -182,8 +182,6 @@ def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max 
                     break
             if counter >= n:
                     break
-        # counter -= len(lucky_ticket_list) - len(list(set(lucky_ticket_list)))
-        # lucky_ticket_list = list(set(lucky_ticket_list))
         i += 1
     return sorted(lucky_ticket_list)
 #
