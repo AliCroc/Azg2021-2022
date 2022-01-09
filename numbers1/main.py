@@ -8,7 +8,6 @@ partial_list = []
 
 def get_sum_terms(numbers, target, partial=[]):
     s = sum(partial)
-    print(partial, s)
     if s == target: 
         partial_list.append(partial)
     if s >= target:
@@ -19,14 +18,6 @@ def get_sum_terms(numbers, target, partial=[]):
         remaining = numbers[i+1:]
         get_sum_terms(remaining, target, partial + [n])
 
-def get_combination_of_numbers(list_of_numbers):
-    combinations = []
-    for i in range(0, 3):
-        for j in range(0, 3):
-            for k in range(0, 3):
-                if(i != j & j != k & k != i):
-                    combinations.append(f'{list_of_numbers[i]}{list_of_numbers[j]}{list_of_numbers[k]}')
-    return combinations
 
 # function declarations
 
@@ -158,44 +149,43 @@ def generate_n_lucky_tickets(n): # generate first n 6-digits lucky tickets, max 
     if n == 1:
         return ["000000"]
     lucky_ticket_list = ["000000"]
-    list_of_combinations_indexed_by_value = [0] * 27
-    # can be 27, here first and last are excluded
-    three_digit_combinations = 998 # excluding '000' and '999'
-    for value in range(1, three_digit_combinations + 1):
-        digit_sum = 0
-        while (value != 0):
-            digit_sum += int(value % 10)
-            value = int(value / 10)
-        list_of_combinations_indexed_by_value[digit_sum] += 1 
 
     i = 1
     counter = 0
-    while True:
+    while counter < n:
+        partial_list.clear()
+        print("loop start", partial_list, i)
         get_sum_terms(list(range(1, 10)), i)
         combination_list = [a for a in partial_list if len(a) <= 3]
-        print("combination_list", combination_list, 1, [1], '[1]')
+        print("combination_list", combination_list)
         for comb in combination_list:
             temp_result = []
-            print(f'{comb[0]}00', comb)
-            if len(comb) == 1:
-                temp_result = itertools.product(f'{comb[0]}00', repeat=3)
-            elif len(comb) == 2:
-                temp_result = itertools.product(f'{comb[0]}{comb[1]}0', repeat=3)
-            else:
-                temp_result = itertools.product(f'{comb[0]}{comb[1]}{comb[2]}', repeat=3)
             final_list = []
+            print(comb)
+            if len(comb) == 1:
+                temp_result = list(set(list(itertools.product(f'{comb[0]}00', repeat=3)))) # function that gives all possible combinations on string
+            elif len(comb) == 2:
+                temp_result = list(set(list(itertools.product(f'{comb[0]}{comb[1]}0', repeat=3))))
+            else:
+                temp_result = list(set(list(itertools.product(f'{comb[0]}{comb[1]}{comb[2]}', repeat=3))))
+            print("products", temp_result)
             for r in temp_result:
                 for t in temp_result:
-                    final_list.append(r + t)
-                    counter += 1
-                    if counter >= n:
-                        break
+                    # print(sum([int(elem1) for elem1 in r]), sum([int(elem2) for elem2 in t]), r, t, r+t)
+                    if sum([int(elem1) for elem1 in r]) != sum([int(elem2) for elem2 in t]):
+                        continue
+                    final_list.append("".join(r + t))
+                final_list.append("".join(r + r))
+            for result in list(set(final_list)):
+                lucky_ticket_list.append(result)
+                counter += 1
                 if counter >= n:
                     break
-            lucky_ticket_list.append(list(set(final_list)))
-        if counter >= n:
-            break
-        i += 1  
+            if counter >= n:
+                    break
+        counter -= len(lucky_ticket_list) - len(list(set(lucky_ticket_list)))
+        lucky_ticket_list = list(set(lucky_ticket_list))
+        i += 1
     return lucky_ticket_list
 #
 
@@ -225,7 +215,7 @@ print(is_prime(1), is_prime(5), is_prime(1024), is_prime(97))
 
 print(is_lucky("123123"), is_lucky("111222"), is_lucky("000001"))
 
-print(generate_n_lucky_tickets(5))
+print(generate_n_lucky_tickets(15))
 
 print(calculate_amount_of_lucky_tickets())
 
